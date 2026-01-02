@@ -1,0 +1,95 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+  <meta charset="UTF-8">
+  <title>Таймер до конца года</title>
+  <style>
+    body {
+      margin: 0;
+      height: 100vh;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      background: #0f172a;
+      color: #e5e7eb;
+      font-family: Arial, sans-serif;
+    }
+
+    .timer {
+      text-align: center;
+      background: #020617;
+      padding: 40px 60px;
+      border-radius: 16px;
+      box-shadow: 0 0 30px rgba(0, 0, 0, 0.6);
+    }
+
+    h1 {
+      margin-bottom: 20px;
+      font-size: 28px;
+    }
+
+    .time {
+      font-size: 26px;
+      line-height: 1.5;
+    }
+  </style>
+</head>
+<body>
+
+  <div class="timer">
+    <h1>До конца года осталось:</h1>
+    <div class="time" id="time"></div>
+  </div>
+
+  <script>
+    function pluralize(value, forms) {
+      const mod10 = value % 10;
+      const mod100 = value % 100;
+
+      if (mod10 === 1 && mod100 !== 11) return forms[0];
+      if (mod10 >= 2 && mod10 <= 4 && (mod100 < 10 || mod100 >= 20)) return forms[1];
+      return forms[2];
+    }
+
+    function updateTimer() {
+      const now = new Date();
+      const nextYear = new Date(now.getFullYear() + 1, 0, 1);
+
+      if (now >= nextYear) {
+        document.getElementById("time").textContent = "С Новым годом! 🎉";
+        return;
+      }
+
+      let diff = nextYear - now;
+
+      const secondsInMinute = 1000 * 60;
+      const secondsInHour = secondsInMinute * 60;
+      const secondsInDay = secondsInHour * 24;
+      const secondsInMonth = secondsInDay * 30; // условный месяц
+
+      const months = Math.floor(diff / secondsInMonth);
+      diff %= secondsInMonth;
+
+      const days = Math.floor(diff / secondsInDay);
+      diff %= secondsInDay;
+
+      const hours = Math.floor(diff / secondsInHour);
+      diff %= secondsInHour;
+
+      const minutes = Math.floor(diff / secondsInMinute);
+      const seconds = Math.floor((diff % secondsInMinute) / 1000);
+
+      document.getElementById("time").textContent =
+        `${months} ${pluralize(months, ["месяц", "месяца", "месяцев"])}, ` +
+        `${days} ${pluralize(days, ["день", "дня", "дней"])}, ` +
+        `${hours} ${pluralize(hours, ["час", "часа", "часов"])}, ` +
+        `${minutes} ${pluralize(minutes, ["минута", "минуты", "минут"])}, ` +
+        `${seconds} ${pluralize(seconds, ["секунда", "секунды", "секунд"])}`;
+    }
+
+    updateTimer();
+    setInterval(updateTimer, 1000);
+  </script>
+
+</body>
+</html>
